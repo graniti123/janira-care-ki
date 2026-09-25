@@ -1,0 +1,50 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: janira-ollama
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - /opt/janira-care/data/ollama:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=5m
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+    networks: [janira-net]
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: janira-webui
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:8080"
+    volumes:
+      - /opt/janira-care/data/open-webui:/app/backend/data
+      - /opt/janira-care/wissen:/app/wissen:ro
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+      - WEBUI_NAME=Janira Care KI-Assistent
+      - ENABLE_SIGNUP=false
+      - DEFAULT_USER_ROLE=user
+    depends_on: [ollama]
+    networks: [janira-net]
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: janira-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /opt/janira-care/data/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/janira-care/data/caddy/data:/data
+      - /opt/janira-care/data/caddy/config:/config
+    depends_on: [open-webui]
+    networks: [janira-net]
+
+networks:
+  janira-net:
+    driver: bridge

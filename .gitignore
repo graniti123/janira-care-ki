@@ -1,0 +1,16 @@
+.env
+*.env
+!.env.example
+wissen/
+*.pdf
+*.epub
+nanda-*
+data/
+backup/
+logs/
+*.tar.gz
+.DS_Store
+*.log
+__pycache__/
+.vscode/
+.idea/
