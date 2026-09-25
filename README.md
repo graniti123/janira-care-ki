@@ -4,7 +4,7 @@ Interner KI-Assistent für Pflegeberatung. Läuft lokal, DSGVO-konform.
 
 ## Installation
 
-    git clone https://github.com/DEIN-USER/janira-care-ki.git
+    git clone https://github.com/graniti123/janira-care-ki.git
     cd janira-care-ki
     sudo ./scripts/install.sh
 
